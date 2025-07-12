@@ -146,8 +146,20 @@ void JkModbus::send(uint8_t function, uint8_t address, uint8_t value) {
   frame[20] = crc >> 8;
   frame[21] = crc >> 0;
 
+
+  if (this->flow_control_pin_ != nullptr) {
+    this->flow_control_pin_->setup();               // ensure configured
+    this->flow_control_pin_->digital_write(true);   // TX mode
+    delayMicroseconds(50);                          // allow RS485 to switch
+  }
+
   this->write_array(frame, 22);
   this->flush();
+
+  if (this->flow_control_pin_ != nullptr) {
+    delayMicroseconds(50);                          // allow final byte to exit
+    this->flow_control_pin_->digital_write(false);  // RX mode
+  }
 }
 
 void JkModbus::authenticate_() { this->send(FUNCTION_PASSWORD, 0x00, 0x00); }
@@ -184,8 +196,19 @@ void JkModbus::read_registers() {
   frame[19] = crc >> 8;
   frame[20] = crc >> 0;
 
+  if (this->flow_control_pin_ != nullptr) {
+    this->flow_control_pin_->setup();
+    this->flow_control_pin_->digital_write(true);
+    delayMicroseconds(50);
+  }
+  
   this->write_array(frame, 21);
   this->flush();
+  
+  if (this->flow_control_pin_ != nullptr) {
+    delayMicroseconds(50);
+    this->flow_control_pin_->digital_write(false);
+  }  
 }
 
 }  // namespace jk_modbus
