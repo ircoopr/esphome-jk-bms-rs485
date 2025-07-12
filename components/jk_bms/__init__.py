@@ -9,6 +9,7 @@ CODEOWNERS = ["@syssi"]
 MULTI_CONF = True
 
 CONF_JK_BMS_ID = "jk_bms_id"
+CONF_FLOW_CONTROL_PIN = "flow_control_pin"
 
 jk_bms_ns = cg.esphome_ns.namespace("jk_bms")
 JkBms = jk_bms_ns.class_("JkBms", cg.PollingComponent, jk_modbus.JkModbusDevice)
