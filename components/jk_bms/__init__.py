@@ -3,10 +3,6 @@ from esphome.components import jk_modbus
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
-from esphome.components import output
-from esphome.components.output.gpio import GPIOOutputPin, gpio_output_pin_schema
-
-
 AUTO_LOAD = ["jk_modbus", "binary_sensor", "sensor", "switch", "text_sensor"]
 CODEOWNERS = ["@syssi"]
 MULTI_CONF = True
