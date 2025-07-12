@@ -2,6 +2,8 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
+#include "esphome/core/gpio.h"
+
 
 namespace esphome {
 namespace jk_modbus {
@@ -25,6 +27,8 @@ class JkModbus : public uart::UARTDevice, public Component {
   void read_registers();
   void set_rx_timeout(uint16_t rx_timeout) { rx_timeout_ = rx_timeout; }
 
+  void set_flow_control_pin(GPIOPin *pin) { this->flow_control_pin_ = pin; }
+
  protected:
   void authenticate_();
   bool parse_jk_modbus_byte_(uint8_t byte);
@@ -33,6 +37,8 @@ class JkModbus : public uart::UARTDevice, public Component {
   uint16_t rx_timeout_{50};
   uint32_t last_jk_modbus_byte_{0};
   std::vector<JkModbusDevice *> devices_;
+
+  GPIOPin *flow_control_pin_{nullptr}; 
 };
 
 class JkModbusDevice {
