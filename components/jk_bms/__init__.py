@@ -16,7 +16,7 @@ JkBms = jk_bms_ns.class_("JkBms", cg.PollingComponent, jk_modbus.JkModbusDevice)
 JK_BMS_COMPONENT_SCHEMA = cv.Schema(
     {
         cv.GenerateID(CONF_JK_BMS_ID): cv.use_id(JkBms),
-        cv.Optional("flow_control_pin"): gpio.gpio_output_pin_schema,
+        cv.Optional(CONF_FLOW_CONTROL_PIN): gpio.output_pin_schema(),
     }
 )
 
@@ -37,5 +37,5 @@ async def to_code(config):
     await jk_modbus.register_jk_modbus_device(var, config)
 
     if "flow_control_pin" in config:
-        pin = await cg.gpio_pin_expression(config["flow_control_pin"])
+        pin_expr = await gpio.gpio_pin_expression(flow_control_pin)
         cg.add(var.get_modbus().set_flow_control_pin(pin))
