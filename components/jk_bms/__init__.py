@@ -2,11 +2,7 @@ import esphome.codegen as cg
 from esphome.components import jk_modbus
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
-
-try:
-    from esphome.components.gpio import gpio_output_pin_schema
-except ImportError:
-    from esphome.components.output import output_pin_schema as gpio_output_pin_schema
+from esphome.components.gpio import gpio_output_pin_schema, GPIOOutputPin
 
 AUTO_LOAD = ["jk_modbus", "binary_sensor", "sensor", "switch", "text_sensor"]
 CODEOWNERS = ["@syssi"]
