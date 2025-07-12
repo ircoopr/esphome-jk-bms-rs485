@@ -3,7 +3,7 @@ from esphome.components import jk_modbus
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
-from esphome.components.output import output_pin_schema, GPIOOutputPin  # ✅ This is the fix!
+from esphome.components.gpio import gpio_output_pin_schema  # Correct import for GPIO output pin schema
 
 AUTO_LOAD = ["jk_modbus", "binary_sensor", "sensor", "switch", "text_sensor"]
 CODEOWNERS = ["@syssi"]
@@ -18,7 +18,7 @@ JkBms = jk_bms_ns.class_("JkBms", cg.PollingComponent, jk_modbus.JkModbusDevice)
 JK_BMS_COMPONENT_SCHEMA = cv.Schema(
     {
         cv.GenerateID(CONF_JK_BMS_ID): cv.use_id(JkBms),
-        cv.Optional(CONF_FLOW_CONTROL_PIN): output_pin_schema,
+        cv.Optional(CONF_FLOW_CONTROL_PIN): gpio_output_pin_schema,
     }
 )
 
@@ -26,12 +26,12 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(JkBms),
-            cv.Optional(CONF_FLOW_CONTROL_PIN): output_pin_schema,
         }
     )
     .extend(cv.polling_component_schema("5s"))
     .extend(jk_modbus.jk_modbus_device_schema(0x4E))
 )
+
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
@@ -39,5 +39,5 @@ async def to_code(config):
     await jk_modbus.register_jk_modbus_device(var, config)
 
     if CONF_FLOW_CONTROL_PIN in config:
-        flow_pin = await cg.register_output_pin(config[CONF_FLOW_CONTROL_PIN])
+        flow_pin = await cg.gpio_pin_expression(config[CONF_FLOW_CONTROL_PIN])
         cg.add(var.get_modbus().set_flow_control_pin(flow_pin))
